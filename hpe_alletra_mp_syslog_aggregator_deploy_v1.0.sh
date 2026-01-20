@@ -555,10 +555,6 @@ write_fluentd_config() {
   </buffer>
 </match>
 
-
-
-
-
 EOFCONF
 }
 
