@@ -1,0 +1,118 @@
+[
+  {
+    "json": {
+      "description": "extracts json fields from message and maps to hpe.*",
+      "field": "message",
+      "target_field": "hpe"
+    }
+  },
+  {
+    "script": {
+      "description": "maps hpe.host.name to host.name",
+      "source": "if (ctx.hpe != null) {\r   // Try to get host.name from hpe\r   def hostName = null;\r   \r   // Check if hpe has a field called \"host.name\"\r   if (ctx.hpe.containsKey(\"host.name\")) {\r     hostName = ctx.hpe.get(\"host.name\");\r   } \r   // Check if hpe has a nested structure with host.name\r   else if (ctx.hpe.containsKey(\"host\") && ctx.hpe.get(\"host\") instanceof Map) {\r     def hostObj = ctx.hpe.get(\"host\");\r     if (hostObj.containsKey(\"name\")) {\r       hostName = hostObj.get(\"name\");\r     }\r   }\r   \r   // Set host.name if we found a value\r   if (hostName != null) {\r     if (!ctx.containsKey(\"host\")) {\r       ctx.put(\"host\", new HashMap());\r     }\r     ctx.host.put(\"name\", hostName);\r   }\r }",
+      "lang": "painless"
+    }
+  },
+  {
+    "script": {
+      "description": "maps hpe.source.ip to source.ip",
+      "source": "if (ctx.hpe != null) {\r   // Try to get source.ip from hpe\r   def sourceIp = null;\r   \r   // Check if hpe has a field called \"source.ip\"\r   if (ctx.hpe.containsKey(\"source.ip\")) {\r     sourceIp = ctx.hpe.get(\"source.ip\");\r   } \r   // Check if hpe has a nested structure with source.ip\r   else if (ctx.hpe.containsKey(\"source\") && ctx.hpe.get(\"source\") instanceof Map) {\r     def sourceObj = ctx.hpe.get(\"source\");\r     if (sourceObj.containsKey(\"ip\")) {\r       sourceIp = sourceObj.get(\"ip\");\r     }\r   }\r   \r   // Set source.ip if we found a value\r   if (sourceIp != null) {\r     if (!ctx.containsKey(\"source\")) {\r       ctx.put(\"source\", new HashMap());\r     }\r     ctx.source.put(\"ip\", sourceIp);\r   }\r }"
+    }
+  },
+  {
+    "script": {
+      "description": "maps hpe.source.port to source.port",
+      "source": "if (ctx.hpe != null) {\r   // Try to get source.port from hpe\r   def sourcePort = null;\r   \r   // Check if hpe has a field called \"source.port\"\r   if (ctx.hpe.containsKey(\"source.port\")) {\r     sourcePort = ctx.hpe.get(\"source.port\");\r   } \r   // Check if hpe has a nested structure with source.port\r   else if (ctx.hpe.containsKey(\"source\") && ctx.hpe.get(\"source\") instanceof Map) {\r     def sourceObj = ctx.hpe.get(\"source\");\r     if (sourceObj.containsKey(\"port\")) {\r       sourcePort = sourceObj.get(\"port\");\r     }\r   }\r   \r   // Set source.port if we found a value\r   if (sourcePort != null) {\r     if (!ctx.containsKey(\"source\")) {\r       ctx.put(\"source\", new HashMap());\r     }\r     ctx.source.put(\"port\", sourcePort);\r   }\r }"
+    }
+  },
+  {
+    "script": {
+      "description": "maps hpe.user.name to user.name",
+      "source": "if (ctx.hpe != null) {\r   // Try to get user.name from hpe\r   def userName = null;\r   \r   // Check if hpe has a field called \"user.name\"\r   if (ctx.hpe.containsKey(\"user.name\")) {\r     userName = ctx.hpe.get(\"user.name\");\r   } \r   // Check if hpe has a nested structure with user.name\r   else if (ctx.hpe.containsKey(\"user\") && ctx.hpe.get(\"user\") instanceof Map) {\r     def userObj = ctx.hpe.get(\"user\");\r     if (userObj.containsKey(\"name\")) {\r       userName = userObj.get(\"name\");\r     }\r   }\r   \r   // Set user.name if we found a value\r   if (userName != null) {\r     if (!ctx.containsKey(\"user\")) {\r       ctx.put(\"user\", new HashMap());\r     }\r     ctx.user.put(\"name\", userName);\r   }\r }"
+    }
+  },
+  {
+    "script": {
+      "description": "maps hpe.user.name to user.name",
+      "source": "if (ctx.hpe != null) {\r   // Try to get user.role from hpe\r   def userRole = null;\r   \r   // Check if hpe has a field called \"user.role\"\r   if (ctx.hpe.containsKey(\"user.role\")) {\r     userRole = ctx.hpe.get(\"user.role\");\r   } \r   // Check if hpe has a nested structure with user.role\r   else if (ctx.hpe.containsKey(\"user\") && ctx.hpe.get(\"user\") instanceof Map) {\r     def userObj = ctx.hpe.get(\"user\");\r     if (userObj.containsKey(\"role\")) {\r       userRole = userObj.get(\"role\");\r     }\r   }\r   \r   // Set user.role if we found a value\r   if (userRole != null) {\r     if (!ctx.containsKey(\"user\")) {\r       ctx.put(\"user\", new HashMap());\r     }\r     ctx.user.put(\"role\", userRole);\r   }\r }"
+    }
+  },
+  {
+    "script": {
+      "description": "maps hpe.event.provider to event.provider",
+      "source": "if (ctx.hpe != null) {\r   // Try to get event.provider from hpe\r   def eventProvider = null;\r   \r   // Check if hpe has a field called \"event.provider\"\r   if (ctx.hpe.containsKey(\"event.provider\")) {\r     eventProvider = ctx.hpe.get(\"event.provider\");\r   } \r   // Check if hpe has a nested structure with event.provider\r   else if (ctx.hpe.containsKey(\"event\") && ctx.hpe.get(\"event\") instanceof Map) {\r     def eventObj = ctx.hpe.get(\"event\");\r     if (eventObj.containsKey(\"provider\")) {\r       eventProvider = eventObj.get(\"provider\");\r     }\r   }\r   \r   // Set event.provider if we found a value\r   if (eventProvider != null) {\r     if (!ctx.containsKey(\"event\")) {\r       ctx.put(\"event\", new HashMap());\r     }\r     ctx.event.put(\"provider\", eventProvider);\r   }\r }"
+    }
+  },
+  {
+    "script": {
+      "description": "maps hpe.event.type to event.type",
+      "source": "if (ctx.hpe != null) {\r   // Try to get event.type from hpe\r   def eventType = null;\r   \r   // Check if hpe has a field called \"event.type\"\r   if (ctx.hpe.containsKey(\"event.type\")) {\r     eventType = ctx.hpe.get(\"event.type\");\r   } \r   // Check if hpe has a nested structure with event.type\r   else if (ctx.hpe.containsKey(\"event\") && ctx.hpe.get(\"event\") instanceof Map) {\r     def eventObj = ctx.hpe.get(\"event\");\r     if (eventObj.containsKey(\"type\")) {\r       eventType = eventObj.get(\"type\");\r     }\r   }\r   \r   // Set event.type if we found a value\r   if (eventType != null) {\r     if (!ctx.containsKey(\"event\")) {\r       ctx.put(\"event\", new HashMap());\r     }\r     ctx.event.put(\"type\", eventType);\r   }\r }"
+    }
+  },
+  {
+    "script": {
+      "description": "maps hpe.event.action to event.action",
+      "source": "if (ctx.hpe != null) {\r   // Try to get event.action from hpe\r   def eventAction = null;\r   \r   // Check if hpe has a field called \"event.action\"\r   if (ctx.hpe.containsKey(\"event.action\")) {\r     eventAction = ctx.hpe.get(\"event.action\");\r   } \r   // Check if hpe has a nested structure with event.action\r   else if (ctx.hpe.containsKey(\"event\") && ctx.hpe.get(\"event\") instanceof Map) {\r     def eventObj = ctx.hpe.get(\"event\");\r     if (eventObj.containsKey(\"action\")) {\r       eventAction = eventObj.get(\"action\");\r     }\r   }\r   \r   // Set event.action if we found a value\r   if (eventAction != null) {\r     if (!ctx.containsKey(\"event\")) {\r       ctx.put(\"event\", new HashMap());\r     }\r     ctx.event.put(\"action\", eventAction);\r   }\r }"
+    }
+  },
+  {
+    "script": {
+      "description": "maps hpe.event.category to event.category",
+      "source": "if (ctx.hpe != null) {\r   // Try to get event.category from hpe\r   def eventCategory = null;\r   \r   // Check if hpe has a field called \"event.category\"\r   if (ctx.hpe.containsKey(\"event.category\")) {\r     eventCategory = ctx.hpe.get(\"event.category\");\r   } \r   // Check if hpe has a nested structure with event.category\r   else if (ctx.hpe.containsKey(\"event\") && ctx.hpe.get(\"event\") instanceof Map) {\r     def eventObj = ctx.hpe.get(\"event\");\r     if (eventObj.containsKey(\"category\")) {\r       eventCategory = eventObj.get(\"category\");\r     }\r   }\r   \r   // Set event.category if we found a value\r   if (eventCategory != null) {\r     if (!ctx.containsKey(\"event\")) {\r       ctx.put(\"event\", new HashMap());\r     }\r     ctx.event.put(\"category\", eventCategory);\r   }\r }"
+    }
+  },
+  {
+    "script": {
+      "description": "maps hpe.event.ingested to event.ingested",
+      "source": "if (ctx.hpe != null) {\r   // Try to get event.ingested from hpe\r   def eventIngested = null;\r   \r   // Check if hpe has a field called \"event.ingested\"\r   if (ctx.hpe.containsKey(\"event.ingested\")) {\r     eventIngested = ctx.hpe.get(\"event.ingested\");\r   } \r   // Check if hpe has a nested structure with event.ingested\r   else if (ctx.hpe.containsKey(\"event\") && ctx.hpe.get(\"event\") instanceof Map) {\r     def eventObj = ctx.hpe.get(\"event\");\r     if (eventObj.containsKey(\"ingested\")) {\r       eventIngested = eventObj.get(\"ingested\");\r     }\r   }\r   \r   // Set event.ingested if we found a value\r   if (eventIngested != null) {\r     if (!ctx.containsKey(\"event\")) {\r       ctx.put(\"event\", new HashMap());\r     }\r     ctx.event.put(\"ingested\", eventIngested);\r   }\r }"
+    }
+  },
+  {
+    "script": {
+      "description": "maps hpe.event.kind to event.kind",
+      "source": "if (ctx.hpe != null) {\r   // Try to get event.kind from hpe\r   def eventKind = null;\r   \r   // Check if hpe has a field called \"event.kind\"\r   if (ctx.hpe.containsKey(\"event.kind\")) {\r     eventKind = ctx.hpe.get(\"event.kind\");\r   } \r   // Check if hpe has a nested structure with event.kind\r   else if (ctx.hpe.containsKey(\"event\") && ctx.hpe.get(\"event\") instanceof Map) {\r     def eventObj = ctx.hpe.get(\"event\");\r     if (eventObj.containsKey(\"kind\")) {\r       eventKind = eventObj.get(\"kind\");\r     }\r   }\r   \r   // Set event.kind if we found a value\r   if (eventKind != null) {\r     if (!ctx.containsKey(\"event\")) {\r       ctx.put(\"event\", new HashMap());\r     }\r     ctx.event.put(\"kind\", eventKind);\r   }\r }"
+    }
+  },
+  {
+    "script": {
+      "description": "maps hpe.event.outcome to event.outcome",
+      "source": "if (ctx.hpe != null) {\r   // Try to get event.outcome from hpe\r   def eventOutcome = null;\r   \r   // Check if hpe has a field called \"event.outcome\"\r   if (ctx.hpe.containsKey(\"event.outcome\")) {\r     eventOutcome = ctx.hpe.get(\"event.outcome\");\r   } \r   // Check if hpe has a nested structure with event.outcome\r   else if (ctx.hpe.containsKey(\"event\") && ctx.hpe.get(\"event\") instanceof Map) {\r     def eventObj = ctx.hpe.get(\"event\");\r     if (eventObj.containsKey(\"outcome\")) {\r       eventOutcome = eventObj.get(\"outcome\");\r     }\r   }\r   \r   // Set event.outcome if we found a value\r   if (eventOutcome != null) {\r     if (!ctx.containsKey(\"event\")) {\r       ctx.put(\"event\", new HashMap());\r     }\r     ctx.event.put(\"outcome\", eventOutcome);\r   }\r }"
+    }
+  },
+  {
+    "script": {
+      "description": "maps hpe.event.severity to event.severity",
+      "source": "if (ctx.hpe != null) {\r   // Try to get event.severity from hpe\r   def eventSeverity = null;\r   \r   // Check if hpe has a field called \"event.severity\"\r   if (ctx.hpe.containsKey(\"event.severity\")) {\r     eventSeverity = ctx.hpe.get(\"event.severity\");\r   } \r   // Check if hpe has a nested structure with event.severity\r   else if (ctx.hpe.containsKey(\"event\") && ctx.hpe.get(\"event\") instanceof Map) {\r     def eventObj = ctx.hpe.get(\"event\");\r     if (eventObj.containsKey(\"severity\")) {\r       eventSeverity = eventObj.get(\"severity\");\r     }\r   }\r   \r   // Set event.severity if we found a value\r   if (eventSeverity != null) {\r     if (!ctx.containsKey(\"event\")) {\r       ctx.put(\"event\", new HashMap());\r     }\r     ctx.event.put(\"severity\", eventSeverity);\r   }\r }"
+    }
+  },
+  {
+    "script": {
+      "description": "maps hpe.event.code to event.code",
+      "source": "if (ctx.hpe != null) {\r   // Try to get event.code from hpe\r   def eventCode = null;\r   \r   // Check if hpe has a field called \"event.code\"\r   if (ctx.hpe.containsKey(\"event.code\")) {\r     eventCode = ctx.hpe.get(\"event.code\");\r   } \r   // Check if hpe has a nested structure with event.code\r   else if (ctx.hpe.containsKey(\"event\") && ctx.hpe.get(\"event\") instanceof Map) {\r     def eventObj = ctx.hpe.get(\"event\");\r     if (eventObj.containsKey(\"code\")) {\r       eventCode = eventObj.get(\"code\");\r     }\r   }\r   \r   // Set event.code if we found a value\r   if (eventCode != null) {\r     if (!ctx.containsKey(\"event\")) {\r       ctx.put(\"event\", new HashMap());\r     }\r     ctx.event.put(\"code\", eventCode);\r   }\r }"
+    }
+  },
+  {
+    "script": {
+      "description": "maps hpe.process.name to process.name",
+      "source": "if (ctx.hpe != null) {\r   // Try to get process.name from hpe\r   def processName = null;\r   \r   // Check if hpe has a field called \"process.name\"\r   if (ctx.hpe.containsKey(\"process.name\")) {\r     processName = ctx.hpe.get(\"process.name\");\r   } \r   // Check if hpe has a nested structure with process.name\r   else if (ctx.hpe.containsKey(\"process\") && ctx.hpe.get(\"process\") instanceof Map) {\r     def processObj = ctx.hpe.get(\"process\");\r     if (processObj.containsKey(\"name\")) {\r       processName = processObj.get(\"name\");\r     }\r   }\r   \r   // Set process.name if we found a value\r   if (processName != null) {\r     if (!ctx.containsKey(\"process\")) {\r       ctx.put(\"process\", new HashMap());\r     }\r     ctx.process.put(\"name\", processName);\r   }\r }"
+    }
+  },
+  {
+    "script": {
+      "description": "maps hpe.process.command_line to process.command_line",
+      "source": "if (ctx.hpe != null) {\r   // Try to get process.command_line from hpe\r   def processCommandLine = null;\r   \r   // Check if hpe has a field called \"process.command_line\"\r   if (ctx.hpe.containsKey(\"process.command_line\")) {\r     processCommandLine = ctx.hpe.get(\"process.command_line\");\r   } \r   // Check if hpe has a nested structure with process.command_line\r   else if (ctx.hpe.containsKey(\"process\") && ctx.hpe.get(\"process\") instanceof Map) {\r     def processObj = ctx.hpe.get(\"process\");\r     if (processObj.containsKey(\"command_line\")) {\r       processCommandLine = processObj.get(\"command_line\");\r     }\r   }\r   \r   // Set process.command_line if we found a value\r   if (processCommandLine != null) {\r     if (!ctx.containsKey(\"process\")) {\r       ctx.put(\"process\", new HashMap());\r     }\r     ctx.process.put(\"command_line\", processCommandLine);\r   }\r }"
+    }
+  },
+  {
+    "script": {
+      "description": "maps hpe.message to message",
+      "source": "if (ctx.hpe != null && ctx.hpe.containsKey(\"message\")) {\r   // Get message directly\r   def message = ctx.hpe.get(\"message\");\r   \r   // Set message if we found a value\r   if (message != null) {\r     ctx.put(\"message\", message);\r   }\r }"
+    }
+  },
+  {
+    "set": {
+      "field": "tags",
+      "value": "HPE Alletra Storage MP B10000"
+    }
+  }
+]

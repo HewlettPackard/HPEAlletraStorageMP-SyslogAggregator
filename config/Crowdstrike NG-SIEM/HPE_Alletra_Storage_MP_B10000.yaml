@@ -1,0 +1,198 @@
+$schema: https://schemas.humio.com/parser/v0.3.0
+script: |-
+  // AI Generated parser: 8f1493679792e1d275d5f38014acae6af92a5a781246ce2c85b5b891d1e17b08
+
+  // Parse HPE ECS JSON logs
+  // Parse the JSON structure and extract timestamp
+  | parseJson(field=@rawstring)
+
+  // Fix timestamp parsing by using findTimestamp instead of directly parsing from @timestamp field
+  | findTimestamp(timezone="UTC")
+
+  // #region METADATA - CPS Compliant Parser Fields
+  | Parser.version := "1.0.0"
+  | Vendor := "hpe"
+  | ecs.version := "8.11.0"
+  | Cps.version := "1.0.0"
+  | event.module := rename(event.module)
+  | event.provider := rename(event.provider)
+
+  // Handle event.kind properly
+  | case {
+      event.kind = * | event.kind := event.kind;
+      * |
+          case {
+              event.provider = "root_activity_command" | event.kind := "alert";
+              event.provider = "root_activity_login" | event.kind := "alert";
+              event.provider = "ransomware.alert" | event.kind := "alert";
+              * | event.kind := "event";
+          };
+  }
+
+  // #endregion
+
+  // #region NORMALIZATION - Ensure all fields are properly normalized to ECS
+
+  // Host fields
+  | host.name := rename(host.name)
+
+  // Event fields
+  | event.code := rename(event.code)
+  | event.outcome := rename(event.outcome)
+  | event.action := rename(event.action)
+  | event.reason := rename(event.reason)
+
+  // Make sure event.outcome is lowercase
+  | case {
+      event.outcome = * | lower(field=event.outcome, as=event.outcome);
+      *
+  }
+
+  // Make sure event.action is lowercase
+  | case {
+      event.action = * | lower(field=event.action, as=event.action);
+      *
+  }
+
+  // Process fields
+  | process.name := rename(process.name)
+  | process.command_line := rename(process.command_line)
+
+  // User fields
+  | user.name := rename(user.name)
+  | user.role := rename(user.role)
+
+  // Source fields
+  | source.ip := rename(source.ip)
+  | source.port := rename(source.port)
+
+  // Message field
+  | message := rename(message)
+
+  // Fix for event.category and event.type - ensure they're always arrays with valid values
+  // Here we properly convert the existing event.category to an array format if it exists
+  | case {
+      event.category = * |
+          case {
+              event.category = "system" | event.category[0] := "host" | drop(event.category);
+              * | event.category[0] := event.category | drop(event.category);
+          };
+      * |
+          case {
+              event.provider = "root_activity_command" | event.category[0] := "host";
+              event.provider = "root_activity_login" | event.category[0] := "authentication";
+              event.provider = "ransomware.alert" | event.category[0] := "malware";
+              event.provider = "user_auth_succeded" | event.category[0] := "authentication";
+              event.provider = "cli_auth_success" | event.category[0] := "authentication";
+              event.provider = "cli_auth_logout" | event.category[0] := "authentication";
+              event.provider = "audit_log_record" | event.category[0] := "iam";
+              * | event.category[0] := "host";
+          };
+  }
+
+  // Similarly, here we properly handle event.type as an array
+  | case {
+      event.type = * | event.type[0] := event.type | drop(event.type);
+      * |
+          case {
+              event.provider = "root_activity_command" | event.type[0] := "info";
+              event.provider = "root_activity_login" | event.type[0] := "info";
+              event.provider = "ransomware.alert" | event.type[0] := "info";
+              event.provider = "user_auth_succeded" | event.type[0] := "info";
+              event.provider = "cli_auth_success" | event.type[0] := "info";
+              event.provider = "cli_auth_logout" | event.type[0] := "info";
+              event.provider = "audit_log_record" | event.type[0] := "info";
+              * | event.type[0] := "info";
+          };
+  }
+
+  // Handle fluent_tag field - preserve as Vendor field
+  | Vendor.fluent_tag := rename(fluent_tag)
+
+  // Handle volume name for ransomware alerts
+  | Vendor.vv_name := rename(vv.name)
+
+  // #endregion
+
+  // #region POST-PROCESSING - Extract additional information from message if not already present
+
+  // Extract information from root activity messages if fields aren't already populated
+  | case {
+      event.provider = "root_activity_command" and message =~ /Root activity detected: root\[\d+\]: (?<src_ip>\d+\.\d+\.\d+\.\d+) (?<src_port>\d+).*?: (?<cmd>.*)/ |
+          source.ip := rename(src_ip) |
+          source.port := rename(src_port) |
+          process.command_line := rename(cmd);
+      *
+  }
+
+  // Extract information from root login messages
+  | case {
+      event.provider = "root_activity_login" and message =~ /Root login detected:.*from (?<src_ip>\d+\.\d+\.\d+\.\d+) port (?<src_port>\d+)/ |
+          source.ip := rename(src_ip) |
+          source.port := rename(src_port);
+      *
+  }
+
+  // Set event.action for user authentication events if not already set
+  | case {
+      event.provider = "user_auth_succeded" and event.action != * |
+          event.action := "login";
+      *
+  }
+
+  // Set event.outcome for user authentication events if not already set
+  | case {
+      event.provider = "user_auth_succeded" and event.outcome != * |
+          event.outcome := "success";
+      *
+  }
+
+  // Extract client and source information from cli_auth_success messages
+  | case {
+      event.provider = "cli_auth_success" and message =~ /\[(?<proc>\w+)\]: User (?<username>\w+) from (?<src_ip>\d+\.\d+\.\d+\.\d+)/ |
+          process.name := rename(proc) |
+          user.name := rename(username) |
+          source.ip := rename(src_ip);
+      *
+  }
+
+  // Extract client and source information from cli_auth_logout messages
+  | case {
+      event.provider = "cli_auth_logout" and message =~ /\[(?<proc>\w+)\]: User (?<username>\w+) from (?<src_ip>\d+\.\d+\.\d+\.\d+)/ |
+          process.name := rename(proc) |
+          user.name := rename(username) |
+          source.ip := rename(src_ip);
+      *
+  }
+
+  // Extract audit log information if not already present
+  | case {
+      event.provider = "audit_log_record" and message =~ /Audit: (?<code>\d+)\|(?<user>[^|]+)\|(?<role>[^|]+)\|(?<src_ip_port>[^|]+)\|(?<action>[^|]+)\|(?<outcome>[^|]+)\|(?<proc>[^|]+)\|(?<cmdline>[^|]*)/ |
+          event.code := rename(code) |
+          user.name := rename(user) |
+          user.role := rename(role) |
+          event.action := rename(action) |
+          event.outcome := rename(outcome) |
+          process.name := rename(proc) |
+          process.command_line := rename(cmdline) |
+          case {
+              src_ip_port =~ /(?<ip>[^:]+):(?<port>\d+)/ |
+                  source.ip := rename(ip) |
+                  source.port := rename(port);
+              *
+          };
+      *
+  }
+
+  // #endregion
+  // YOUR PREVIOUS PARSER WAS COMMENTED OUT BELOW
+  //
+tagFields:
+- Cps.version
+- Vendor
+- ecs.version
+- event.provider
+- event.kind
+- event.module
+- event.outcome
+- observer.type
