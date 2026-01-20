@@ -55,19 +55,19 @@ Once the certificate has been signed, copy and paste the PEM data back into the 
 Country (C, 2-letter code) [e.g. GB]: GB
 State/Province (ST) [e.g. England]: England
 Locality/City (L) [e.g. Bristol]: Bristol
-Organization (O) [e.g. Your Company Ltd]: HPE
-Organizational Unit(s) (OU, comma-separated): TME
-Common Name (CN, FQDN): tme-sec-vault-01
+Organization (O) [e.g. Your Company Ltd]: Your Company Ltd
+Organizational Unit(s) (OU, comma-separated): Your Org
+Common Name (CN, FQDN): syslog.aggregator.xxx.yyy.zzz.net
 Email Address (optional):
-Subject Alternative Names (DNS, comma-separated): tme-sec-vault-01.buk.storage.hpecorp.net
-Subject Alternative Names (IP, comma-separated): 10.21.33.156
+Subject Alternative Names (DNS, comma-separated): syslog.aggregator
+Subject Alternative Names (IP, comma-separated): 11.22.33.44
 
 [+] Creating CSR (PEM) at /etc/fluentd/certs/server.csr
 
 [+] CSR preview (Subject & SANs)
-        Subject: C = GB, ST = England, L = Bristol, O = HPE, OU = TME, CN = tme-sec-vault-01
+        Subject: C = GB, ST = England, L = Bristol, O = Your Company Ltd, OU = Your Org, CN = syslog.aggregator.xxx.yyy.net
                 X509v3 Subject Alternative Name:
-                    DNS:tme-sec-vault-01.buk.storage.hpecorp.net, IP Address:10.21.33.156
+                    DNS:syslog.aggregator, IP Address:11.22.33.44
     Signature Algorithm: sha256WithRSAEncryption
     Signature Value:
         7b:a8:24:9f:5c:08:4e:dc:09:86:b8:e6:4b:49:e6:95:c7:a4:
